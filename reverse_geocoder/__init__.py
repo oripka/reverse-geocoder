@@ -110,7 +110,7 @@ class RGeocoderImpl(object):
         if stream:
             coordinates, self.locations = self.load(stream, stream_columns)
         else:
-            coordinates, self.locations = self.extract(rel_path(RG_FILE), force_download)
+            coordinates, self.locations = self.extract(rel_path(RG_FILE), force_download, overwrite_geodb=overwrite_geodb)
 
         if overwrite_geodb:
             GN_CITIES1000 = overwrite_geodb
@@ -173,7 +173,7 @@ class RGeocoderImpl(object):
 
         return geo_coords, locations
 
-    def extract(self, local_filename, force_download):
+    def extract(self, local_filename, force_download, overwrite_geodb=None):
         """
         Function loads the already extracted GeoNames cities file or downloads and extracts it if
         it doesn't exist locally
@@ -186,7 +186,10 @@ class RGeocoderImpl(object):
                 print('Loading formatted geocoded file...')
             rows = csv.DictReader(open(local_filename, 'rt'))
         else:
-            rows = self.do_extract(GN_CITIES1000, local_filename)
+            if overwrite_geodb:
+                rows = self.do_extract(overwrite_geodb, local_filename)
+            else:
+                rows = self.do_extract(GN_CITIES1000, local_filename)
         
         # Load all the coordinates and locations
         geo_coords, locations = [], []
