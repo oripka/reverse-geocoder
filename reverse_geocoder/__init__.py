@@ -94,7 +94,7 @@ class RGeocoderImpl(object):
     """
     The main reverse geocoder class
     """
-    def __init__(self, mode=2, verbose=True, stream=None, stream_columns=None):
+    def __init__(self, mode=2, verbose=True, stream=None, stream_columns=None, overwrite_geodb=None):
         """ Class Instantiation
         Args:`
         mode (int): Library supports the following two modes:
@@ -102,6 +102,7 @@ class RGeocoderImpl(object):
                     - 2 = Multi-threaded K-D Tree (Default)
         verbose (bool): For verbose output, set to True
         stream (io.StringIO): An in-memory stream of a custom data source
+        overwrite_geodb: Specific country file to download
         """
         self.mode = mode
         self.verbose = verbose
@@ -109,6 +110,9 @@ class RGeocoderImpl(object):
             coordinates, self.locations = self.load(stream, stream_columns)
         else:
             coordinates, self.locations = self.extract(rel_path(RG_FILE))
+
+        if overwrite_geodb:
+            GN_CITIES1000 = overwrite_geodb
 
         if mode == 1: # Single-process
             self.tree = KDTree(coordinates)
