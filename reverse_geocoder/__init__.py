@@ -94,7 +94,7 @@ class RGeocoderImpl(object):
     """
     The main reverse geocoder class
     """
-    def __init__(self, mode=2, verbose=True, stream=None, stream_columns=None, overwrite_geodb=None):
+    def __init__(self, mode=2, verbose=True, stream=None, stream_columns=None, overwrite_geodb=None, force_download=False):
         """ Class Instantiation
         Args:`
         mode (int): Library supports the following two modes:
@@ -103,13 +103,14 @@ class RGeocoderImpl(object):
         verbose (bool): For verbose output, set to True
         stream (io.StringIO): An in-memory stream of a custom data source
         overwrite_geodb: Specific country file to download
+        force_download: Force download of fresh database
         """
         self.mode = mode
         self.verbose = verbose
         if stream:
             coordinates, self.locations = self.load(stream, stream_columns)
         else:
-            coordinates, self.locations = self.extract(rel_path(RG_FILE))
+            coordinates, self.locations = self.extract(rel_path(RG_FILE), force_download)
 
         if overwrite_geodb:
             GN_CITIES1000 = overwrite_geodb
@@ -172,14 +173,15 @@ class RGeocoderImpl(object):
 
         return geo_coords, locations
 
-    def extract(self, local_filename):
+    def extract(self, local_filename, force_download):
         """
         Function loads the already extracted GeoNames cities file or downloads and extracts it if
         it doesn't exist locally
         Args:
         local_filename (str): Path to local RG_FILE
+        force_download (bool): ignore cached files and redownload file
         """
-        if os.path.exists(local_filename):
+        if os.path.exists(local_filename) and not force_download:
             if self.verbose:
                 print('Loading formatted geocoded file...')
             rows = csv.DictReader(open(local_filename, 'rt'))
