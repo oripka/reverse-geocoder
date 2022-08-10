@@ -296,7 +296,9 @@ def rel_path(filename):
     """
     Function that gets relative path to the filename
     """
-    return os.path.join(os.getcwd(), os.path.dirname(__file__), filename)
+    p = os.path.join(os.getcwd(), os.path.dirname(__file__), filename)
+    print(p)
+    return p
 
 def get(geo_coord, mode=2, verbose=True):
     """
