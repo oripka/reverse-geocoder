@@ -1,6 +1,6 @@
 from timeit import timeit
 import csv
-import reverse_geocoder as rg
+import reverse_geocoder2 as rg
 
 if __name__ == '__main__':
     setup = "import csv;import reverse_geocoder as rg;print('Loading coordinates...');" + \
